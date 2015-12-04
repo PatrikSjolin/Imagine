@@ -1,0 +1,44 @@
+﻿@{
+    ViewBag.Title = "Imagine";
+}
+
+@model Imagine.Models.TasksViewModel
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div ng-controller="taskController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
+        <div class="row">
+            <div class="col-sm-8">
+                <br /><h1>Imagine</h1><br />
+                
+                @*Input*@
+                <input type="text" ng-model="taskName" autofocus />
+                
+                @*Knapp för add*@
+                <input type="submit" ng-click="AddTask()" class="btn btn-success" value="Add on the go" />
+                <input type="submit" ng-click="AddEvent()" class="btn btn-warning" value="Event" />
+                <input type="submit" ng-click="AddPending()" class="btn btn-primary" value="Pending" />
+                
+                @*Loopar ut tasks*@
+                <br /><br /><br />
+                <h2>All Tasks</h2>
+                <br />
+                <ul ng-repeat="task in tasks">
+                    <li>{{task.Name}}<input type="submit" ng-click="RemoveTask(task, $index)" class="btn btn-xs btn-danger" value="Remove" /></li>
+                </ul>
+            </div>
+            <div>
+                <br /><h1>Schedule</h1><br /><br />
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <br />
+    @Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })
+    <br />
+    <br />
+    <br />
+    @Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
+}
