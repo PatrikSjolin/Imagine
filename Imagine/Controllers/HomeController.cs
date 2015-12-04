@@ -1,6 +1,7 @@
 ﻿using Imagine.Models;
 using Microsoft.AspNet.Identity;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -59,17 +60,52 @@ namespace Imagine.Controllers
             context.SaveChanges();
             return View();
         }
-        public ActionResult About()
+
+        [HttpPost]
+        public ActionResult AddSchedule(DateTime from, DateTime to)
         {
-            ViewBag.Message = "Your application description page.";
+            ApplicationDbContext context = new ApplicationDbContext();
+            string userId = User.Identity.GetUserId();
+
+            var userTasks = context.Tasks.Where(x => x.User.Id == userId);
+
+            var tasksWithDueDates = userTasks.Where(x => x.DueDate.HasValue);
+            var recurringTasks = userTasks.Where(x => x.Period.HasValue);
+            var pendingTasks = userTasks.Where(x => !x.Frequency.HasValue && !x.Period.HasValue && !x.DueDate.HasValue);
+
+            List<Schedule> schedule = new List<Schedule>();
+
+            foreach(var taskWithDueDate in tasksWithDueDates)
+            {
+                schedule.Add(new Schedule
+                {
+                    Date = taskWithDueDate.DueDate.Value,
+                    Id = Guid.NewGuid(),
+                    Duration = new TimeSpan(1, 0, 0),
+                    Task = taskWithDueDate
+                });
+            }
 
             return View();
         }
 
-        public ActionResult Contact()
+        [HttpPost]
+        public ActionResult AddRecurringTask(string id, string name, string period, int frequency)
         {
-            ViewBag.Message = "Your contact page.";
+            ApplicationDbContext context = new ApplicationDbContext();
+            string userId = User.Identity.GetUserId();
 
+            TaskEntity entity = new TaskEntity
+            {
+                Created = DateTime.Now,
+                Id = new Guid(id),
+                Name = name,
+                User = context.Users.First(x => x.Id == userId),
+                Frequency = frequency,
+                Period = (Period)Enum.Parse(typeof(Period), period)
+            };
+            context.Tasks.Add(entity);
+            context.SaveChanges();
             return View();
         }
     }

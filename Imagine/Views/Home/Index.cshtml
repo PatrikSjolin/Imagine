@@ -9,26 +9,68 @@
     <div ng-controller="taskController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
         <div class="row">
             <div class="col-sm-8">
-                <br /><h1>Imagine</h1><br />
+                <br /><h1>Add Task</h1><br />
                 
                 @*Input*@
-                <input type="text" ng-model="taskName" autofocus />
-                
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-disabled="ShowAdvanced" ng-model="taskName" autofocus placeholder="Enter task name" />
+                    </div>
+                </form>
                 @*Knapp för add*@
-                <input type="submit" ng-click="AddTask()" class="btn btn-success" value="Add on the go" />
-                <input type="submit" ng-click="AddEvent()" class="btn btn-warning" value="Event" />
-                <input type="submit" ng-click="AddPending()" class="btn btn-primary" value="Pending" />
+                <input type="submit" ng-click="AddTask()" ng-hide="ShowAdvanced" class="btn btn-success" value="Pending" />
+                <input type="submit" ng-click="AddEvent()" ng-hide="ShowAdvanced" class="btn btn-warning" value="Event" />
+                <input type="submit" ng-click="AddPending()" ng-hide="ShowAdvanced" class="btn btn-primary disabled" value="On the go" />
                 
+                <div ng-show="ShowAdvanced">
+                    <br />
+                    <p>Additional options</p>
+                    <label>
+                        <input type="checkbox" class="btn btn-warning" ng-click="AddRecurring()" value="Recurring" />Recurring
+                    </label>
+                    <div ng-show="ShowRecurring">
+                        <label class="radio-inline">
+                            <input type="radio" ng-model="Period" name="recurrenceOption" value="Day"/>Daily
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" ng-model="Period" name="recurrenceOption" value="Week"/>Weekly
+                        </label>
+                        <label class="radio-inline" >
+                            <input type="radio" ng-model="Period" name="recurrenceOption" value="Month"/>Monthly
+                        </label>
+                        <input type="text" placeholder="Frequency" ng-model="Frequency" />
+                        <p>Event will occur {{Frequency}} times each {{Period}}</p>
+                        <input type="submit" ng-click="AddRecurringTask()" value="Add" />
+                    </div>
+                </div>
+
                 @*Loopar ut tasks*@
                 <br /><br /><br />
-                <h2>All Tasks</h2>
+                <br /><br />
+                <h1>All Tasks</h1>
                 <br />
-                <ul ng-repeat="task in tasks">
-                    <li>{{task.Name}}<input type="submit" ng-click="RemoveTask(task, $index)" class="btn btn-xs btn-danger" value="Remove" /></li>
-                </ul>
+                <table ng-repeat="task in tasks" width="300">
+                    <tr>
+                        <td height="30px">{{task.Name}}</td>
+                        <td height="30px" align="right"><input type="submit" ng-click="RemoveTask(task, $index)" class="btn btn-xs btn-danger" value="Remove" /></td>
+                    </tr>
+                </table>
             </div>
             <div>
-                <br /><h1>Schedule</h1><br /><br />
+                <br /><h1>Schedule</h1><br />
+                <label>From</label>
+                <input type="date" ng-model="from" min="@DateTime.Today.ToShortDateString()" value="@DateTime.Today.ToShortDateString()" />
+                <label>To</label>
+                <input type="date" ng-model="to" min="@DateTime.Today.AddDays(1).ToShortDateString()" value="@DateTime.Today.AddDays(7).ToShortDateString()" />
+                <br/>
+                <br />
+                <input type="submit" ng-click="GenerateSchedule()" class="btn btn-primary btn-lg" value="Make my schedule" />
+
+                <div>
+                    <br/>
+                    <h1>My Schedule</h1>
+                    <p>Number of tasks in schedule: {{numTasks}}</p>
+                </div>
             </div>
         </div>
     </div>

@@ -210,6 +210,10 @@
     <Compile Include="Migrations\201512041131521_AddingSchedule.Designer.cs">
       <DependentUpon>201512041131521_AddingSchedule.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201512041803151_AddingRecurringTask.cs" />
+    <Compile Include="Migrations\201512041803151_AddingRecurringTask.Designer.cs">
+      <DependentUpon>201512041803151_AddingRecurringTask.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -221,13 +225,20 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\bootstrap-switch\bootstrap2\bootstrap-switch.css" />
+    <Content Include="Content\bootstrap-switch\bootstrap2\bootstrap-switch.min.css" />
+    <Content Include="Content\bootstrap-switch\bootstrap3\bootstrap-switch.css" />
+    <Content Include="Content\bootstrap-switch\bootstrap3\bootstrap-switch.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\white-grid-wallpaper.jpg" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\Angular\task.js" />
+    <Content Include="Scripts\bootstrap-switch.js" />
+    <Content Include="Scripts\bootstrap-switch.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config" />
@@ -304,6 +315,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201512041131521_AddingSchedule.resx">
       <DependentUpon>201512041131521_AddingSchedule.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512041803151_AddingRecurringTask.resx">
+      <DependentUpon>201512041803151_AddingRecurringTask.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -23,10 +23,45 @@ app.controller('taskController', function ($scope, $http) {
 
     };
 
+    $scope.AddEvent = function()
+    {
+        $scope.ShowAdvanced = !$scope.ShowAdvanced;
+    }
+
+    $scope.AddRecurring = function()
+    {
+        $scope.ShowRecurring = !$scope.ShowRecurring;
+    }
+
+    $scope.AddRecurringTask = function ()
+    {
+        var taskId = GenerateGuid();
+        var task = { Name: $scope.taskName, Id: taskId };
+
+        
+        $scope.tasks.push(task);
+        $http.post("Home/AddRecurringTask", { id: taskId, name: $scope.taskName, period: $scope.Period, frequency: $scope.Frequency });
+        $scope.taskName = "";
+        $scope.ShowAdvanced = !$scope.ShowAdvanced;
+        $scope.ShowRecurring = !$scope.ShowRecurring;
+    }
+
     $scope.RemoveTask = function (taskId, index)
     {
         $scope.tasks.splice(index, 1);
         $http.post("Home/Remove", { id: taskId.Id });
+    }
+
+    $scope.GenerateSchedule = function()
+    {
+        //$scope.Schedule = [];
+        //for (var i = 0; i < $scope.tasks.length; i++)
+        //{
+
+        //}
+
+        //$scope.numTasks = $scope.tasks.length;
+        $http.post("Home/AddSchedule", {from : $scope.from, to : $scope.to});
     }
 
     function S4() {

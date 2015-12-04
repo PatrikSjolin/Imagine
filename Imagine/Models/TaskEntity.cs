@@ -1,8 +1,16 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 using System;
+using System.ComponentModel;
 
 namespace Imagine.Models
 {
+    public enum Period
+    {   
+        Day,
+        Week,
+        Month
+    }
+
     public class TaskEntity
     {
         public Guid Id { get; set; }
@@ -12,5 +20,7 @@ namespace Imagine.Models
         public DateTime? DueDate { get; set; }
         public DateTime? Modified { get; set; }
         public DateTime? Completed { get; set; }
+        public Period? Period { get; set; }
+        public int? Frequency { get; set; }
     }
 }
