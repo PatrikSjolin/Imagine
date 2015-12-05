@@ -8,40 +8,48 @@
 {
     <div ng-controller="taskController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
         <div class="row">
-            <div class="col-sm-8">
+            <div class="col-sm-7">
                 <br /><h1>Add Task</h1><br />
-                
+
                 @*Input*@
                 <form class="form-horizontal">
                     <div class="form-group">
-                        <input type="text" class="form-control" ng-disabled="ShowAdvanced" ng-model="taskName" autofocus placeholder="Enter task name" />
+                        <input type="text" class="form-control" ng-disabled="ShowAdvanced" ng-model="TaskName" autofocus placeholder="Enter task name" />
                     </div>
                 </form>
                 @*Knapp för add*@
                 <input type="submit" ng-click="AddTask()" ng-hide="ShowAdvanced" class="btn btn-success" value="Pending" />
                 <input type="submit" ng-click="AddEvent()" ng-hide="ShowAdvanced" class="btn btn-warning" value="Event" />
                 <input type="submit" ng-click="AddPending()" ng-hide="ShowAdvanced" class="btn btn-primary disabled" value="On the go" />
-                
+
                 <div ng-show="ShowAdvanced">
                     <br />
-                    <p>Additional options</p>
                     <label>
                         <input type="checkbox" class="btn btn-warning" ng-click="AddRecurring()" value="Recurring" />Recurring
                     </label>
+                    <br />
+                    <label>
+                        Date
+                        <input type="date" ng-model="Date" />
+                    </label>
+                    <label>
+                        Time
+                        <input type="time" ng-model="Time" />
+                    </label>
                     <div ng-show="ShowRecurring">
                         <label class="radio-inline">
-                            <input type="radio" ng-model="Period" name="recurrenceOption" value="Day"/>Daily
+                            <input type="radio" ng-model="Period" name="recurrenceOption" value="Day" />Daily
                         </label>
                         <label class="radio-inline">
-                            <input type="radio" ng-model="Period" name="recurrenceOption" value="Week"/>Weekly
+                            <input type="radio" ng-model="Period" name="recurrenceOption" value="Week" />Weekly
                         </label>
-                        <label class="radio-inline" >
-                            <input type="radio" ng-model="Period" name="recurrenceOption" value="Month"/>Monthly
+                        <label class="radio-inline">
+                            <input type="radio" ng-model="Period" name="recurrenceOption" value="Month" />Monthly
                         </label>
                         <input type="text" placeholder="Frequency" ng-model="Frequency" />
                         <p>Event will occur {{Frequency}} times each {{Period}}</p>
-                        <input type="submit" ng-click="AddRecurringTask()" value="Add" />
                     </div>
+                    <input type="submit" ng-click="AddRecurringTask()" value="Add" />
                 </div>
 
                 @*Loopar ut tasks*@
@@ -49,27 +57,53 @@
                 <br /><br />
                 <h1>All Tasks</h1>
                 <br />
-                <table ng-repeat="task in tasks" width="300">
+                <table ng-repeat="task in tasks" class="table" style="background-color:white;width:300px">
                     <tr>
-                        <td height="30px">{{task.Name}}</td>
-                        <td height="30px" align="right"><input type="submit" ng-click="RemoveTask(task, $index)" class="btn btn-xs btn-danger" value="Remove" /></td>
+                        <td>
+                            <table width="220">
+                                <tr>
+                                    <td>
+                                        {{task.Name}}
+                                    </td>
+                                    <td align="right">
+                                        {{task.Type}}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td align="right" valign="middle">
+                            <input type="submit" ng-click="EditTask(task, $index)" class="btn btn-xs btn-primary" value="Edit" />
+                            <input type="submit" ng-click="RemoveTask(task, $index)" class="btn btn-xs btn-danger" value="Remove" />
+                        </td>
                     </tr>
                 </table>
             </div>
-            <div>
+            <div class="col-sm-4">
                 <br /><h1>Schedule</h1><br />
                 <label>From</label>
-                <input type="date" ng-model="from" min="@DateTime.Today.ToShortDateString()" value="@DateTime.Today.ToShortDateString()" />
+                <input type="date" ng-model="From" min="@DateTime.Today.ToShortDateString()" value="@DateTime.Today.ToShortDateString()" />
+                <br />
+                <br />
                 <label>To</label>
-                <input type="date" ng-model="to" min="@DateTime.Today.AddDays(1).ToShortDateString()" value="@DateTime.Today.AddDays(7).ToShortDateString()" />
-                <br/>
+                <input type="date" ng-model="To" min="@DateTime.Today.AddDays(1).ToShortDateString()" value="@DateTime.Today.AddDays(7).ToShortDateString()" />
+                <br />
                 <br />
                 <input type="submit" ng-click="GenerateSchedule()" class="btn btn-primary btn-lg" value="Make my schedule" />
 
                 <div>
-                    <br/>
+                    <br />
                     <h1>My Schedule</h1>
-                    <p>Number of tasks in schedule: {{numTasks}}</p>
+                    <table class="table table-striped" style="background-color:white; width:300px">
+                        @foreach (var scheduledTask in Model.ScheduledTasks)
+                        {
+                            <tr>
+                                <td align="center">
+                                    <p>@scheduledTask.Date</p>
+                                    <p>@scheduledTask.Name</p>
+                                </td>
+                            </tr>
+                        }
+                    </table>
                 </div>
             </div>
         </div>

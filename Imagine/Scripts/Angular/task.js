@@ -3,65 +3,73 @@
 app.controller('taskController', function ($scope, $http) {
     $scope.tasks = [];
 
-    $scope.Init = function (tasks)
-    {
+    $scope.Init = function (tasks) {
         $scope.tasks = tasks.Tasks;
     };
 
-    $scope.AddTask = function ()
-    {
+    $scope.AddTask = function () {
+        $scope.AddTask(null, null);
+    }
+
+    $scope.AddTask = function (dueDate, dueTime) {
         var taskId = GenerateGuid();
-        var task = { Name: $scope.taskName, Id: taskId }
+        var type = "Pending";
+        if (dueDate != null) {
+            type = "Event";
+        }
+        var task = { Id: taskId, Name: $scope.TaskName, Type: type }
         $scope.tasks.push(task);
 
         $http({
             url: "Home/Add",
             method: "POST",
-            params: { name: $scope.taskName, id: taskId }
+            params: { id: taskId, name: $scope.TaskName, date: dueDate, time: dueTime }
         });
-        $scope.taskName = "";
+        $scope.TaskName = "";
 
     };
 
-    $scope.AddEvent = function()
-    {
+    $scope.AddEvent = function () {
         $scope.ShowAdvanced = !$scope.ShowAdvanced;
     }
 
-    $scope.AddRecurring = function()
-    {
+    $scope.AddRecurring = function () {
         $scope.ShowRecurring = !$scope.ShowRecurring;
     }
 
-    $scope.AddRecurringTask = function ()
-    {
+    $scope.AddRecurringTask = function () {
         var taskId = GenerateGuid();
-        var task = { Name: $scope.taskName, Id: taskId };
 
-        
-        $scope.tasks.push(task);
-        $http.post("Home/AddRecurringTask", { id: taskId, name: $scope.taskName, period: $scope.Period, frequency: $scope.Frequency });
-        $scope.taskName = "";
+        if ($scope.Period == null) {
+            $scope.AddTask($scope.Date, $scope.Time);
+        }
+        else {
+            var task = { Id: taskId, Name: $scope.TaskName, Type: type };
+            $scope.tasks.push(task);
+            $http.post("Home/AddRecurringTask", { id: taskId, name: $scope.TaskName, period: $scope.Period, frequency: $scope.Frequency });
+            $scope.TaskName = "";
+            $scope.ShowRecurring = !$scope.ShowRecurring;
+            $scope.Period = "";
+            $scope.Frequency = "";
+        }
+        $scope.TaskName = "";
         $scope.ShowAdvanced = !$scope.ShowAdvanced;
-        $scope.ShowRecurring = !$scope.ShowRecurring;
     }
 
-    $scope.RemoveTask = function (taskId, index)
-    {
+    $scope.RemoveTask = function (taskId, index) {
         $scope.tasks.splice(index, 1);
         $http.post("Home/Remove", { id: taskId.Id });
     }
 
-    $scope.GenerateSchedule = function()
-    {
-        //$scope.Schedule = [];
-        //for (var i = 0; i < $scope.tasks.length; i++)
-        //{
+    $scope.GenerateSchedule = function () {
+        $http.post("Home/AddSchedule", { from: $scope.From, to: $scope.To });
+        setTimeout(function () {
+            window.location.reload();
+        }, 1000);
+    }
 
-        //}
-
-        //$scope.numTasks = $scope.tasks.length;
-        $http.post("Home/AddSchedule", {from : $scope.from, to : $scope.to});
+    $scope.EditTask = function (taskId, index) {
+        alert("Edit not implemented");
     }
 
     function S4() {

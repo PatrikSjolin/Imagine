@@ -2,11 +2,11 @@
 
 namespace Imagine.Models
 {
-    public class Schedule
+    public class ScheduledTask
     {
         public Guid Id { get; set; }
         public virtual TaskEntity Task { get; set; }
         public DateTime Date { get; set; }
-        public TimeSpan Duration { get; set; }
+        public double Hours { get; set; }
     }
 }

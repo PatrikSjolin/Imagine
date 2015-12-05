@@ -214,11 +214,20 @@
     <Compile Include="Migrations\201512041803151_AddingRecurringTask.Designer.cs">
       <DependentUpon>201512041803151_AddingRecurringTask.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201512042132541_AddingScheduleFix.cs" />
+    <Compile Include="Migrations\201512042132541_AddingScheduleFix.Designer.cs">
+      <DependentUpon>201512042132541_AddingScheduleFix.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201512042152160_NameChanges.cs" />
+    <Compile Include="Migrations\201512042152160_NameChanges.Designer.cs">
+      <DependentUpon>201512042152160_NameChanges.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\Schedule.cs" />
+    <Compile Include="Models\ScheduledTask.cs" />
+    <Compile Include="Models\ScheduledTaskViewModel.cs" />
     <Compile Include="Models\TaskEntity.cs" />
     <Compile Include="Models\TasksViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -318,6 +327,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201512041803151_AddingRecurringTask.resx">
       <DependentUpon>201512041803151_AddingRecurringTask.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512042132541_AddingScheduleFix.resx">
+      <DependentUpon>201512042132541_AddingScheduleFix.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512042152160_NameChanges.resx">
+      <DependentUpon>201512042152160_NameChanges.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

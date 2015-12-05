@@ -21,6 +21,7 @@ namespace Imagine.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<TaskEntity> Tasks { get; set; }
+        public DbSet<ScheduledTask> ScheduledTasks { get; set; }
 
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
