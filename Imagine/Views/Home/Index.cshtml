@@ -7,16 +7,19 @@
 @if (User.Identity.IsAuthenticated)
 {
     <div ng-controller="taskController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
+        <br />
+        <br />
         <div class="row">
-            <div class="col-sm-7">
-                <br /><h1>Add Task</h1><br />
 
-                @*Input*@
+            @*Add Task*@
+            <div class="col-md-8">
+                <h1>Add Task</h1><br />
                 <form class="form-horizontal">
                     <div class="form-group">
                         <input type="text" class="form-control" ng-disabled="ShowAdvanced" ng-model="TaskName" autofocus placeholder="Enter task name" />
                     </div>
                 </form>
+
                 @*Knapp för add*@
                 <input type="submit" ng-click="AddTask()" ng-hide="ShowAdvanced" class="btn btn-success" value="Pending" />
                 <input type="submit" ng-click="AddEvent()" ng-hide="ShowAdvanced" class="btn btn-warning" value="Event" />
@@ -83,35 +86,10 @@
                         <h4 ng-show="TimeBased">Event will occur on {{Date}} each {{Period}}</h4>
                     </div>
                 </div>
-
-                @*Loopar ut tasks*@
-                <br /><br /><br />
-                <br /><br />
-                <h1>All Tasks</h1>
-                <br />
-                <table class="table" style="background-color:white;width:300px">
-                    <tr ng-repeat="task in tasks">
-                        <td>
-                            <table width="220">
-                                <tr>
-                                    <td>
-                                        {{task.Name}}
-                                    </td>
-                                    <td align="right">
-                                        {{task.Type}}
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                        <td align="right" valign="middle">
-                            <input type="submit" ng-click="EditTask(task, $index)" class="btn btn-xs btn-primary" value="Edit" />
-                            <input type="submit" ng-click="RemoveTask(task, $index)" class="btn btn-xs btn-danger" value="Remove" />
-                        </td>
-                    </tr>
-                </table>
             </div>
-            <div class="col-sm-4">
-                <br /><h1>Schedule</h1><br />
+            @*Schedule*@
+            <div class="col-md-4">
+                <h1>Schedule</h1><br />
                 <label>From</label>
                 <input type="date" ng-model="From" min="@DateTime.Today.ToShortDateString()" value="@DateTime.Today.ToShortDateString()" />
                 <br />
@@ -121,35 +99,63 @@
                 <br />
                 <br />
                 <input type="submit" ng-click="GenerateSchedule()" class="btn btn-primary btn-lg" value="Make my schedule" />
-                @*My Schedule*@
-                <div>
-                    <br />
-                    <h1>My Schedule</h1>
-                    <table class="table table-striped" style="background-color:white; width:300px">
-                        @foreach (var scheduledTask in Model.ScheduledTasks)
-                        {
-                            <tr>
-                                <td>
-                                    <h4>@scheduledTask.Date.ToShortDateString() - @scheduledTask.Date.DayOfWeek</h4>
-                                    @foreach (var task in scheduledTask.Tasks)
-                                    {
-                                        <table width="300">
-                                            <tr>
-                                                <td>
-                                                    <p>@task.Name - @task.Hours h</p>
-                                                </td>
-                                                <td align="right">
-                                                    <input type="button" ng-click="CompleteTask(scheduledTask)" value="Complete" class="btn btn-xs btn-success" />
-                                                    <input type="button" ng-click="Lock(scheduledTask)" value="Lock" class="btn btn-xs btn-default" />
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </table>
-                </div>
+
+            </div>
+        </div>
+
+        <br />
+        <br />
+        <br />
+
+        <div class="row">
+
+            @*Loopar ut tasks*@
+            <div class="col-md-8">
+                <h1>All Tasks</h1>
+                <br />
+                <table class="table" style="background-color:white;width:300px">
+                    <tr ng-repeat="task in tasks">
+                        <td>
+                            {{task.Name}}
+                        </td>
+                        <td align="right">
+                            {{task.Type}}
+                        </td>
+                        <td align="right" valign="middle">
+                            <input type="submit" ng-click="EditTask(task, $index)" class="btn btn-xs btn-primary" value="Edit" />
+                            <input type="submit" ng-click="RemoveTask(task, $index)" class="btn btn-xs btn-danger" value="Remove" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            @*My Schedule*@
+            <div class="col-md-4">
+                <h1>My Schedule</h1>
+                <table class="table table-striped" style="background-color:white; width:300px">
+                    @foreach (var scheduledTask in Model.ScheduledTasks)
+                    {
+                        <tr>
+                            <td>
+                                <h4>@scheduledTask.Date.ToShortDateString() - @scheduledTask.Date.DayOfWeek</h4>
+                                @foreach (var task in scheduledTask.Tasks)
+                                {
+                                    <table width="350">
+                                        <tr>
+                                            <td>
+                                                <p>@task.Name - @task.Hours h</p>
+                                            </td>
+                                            <td align="right">
+                                                <input type="button" ng-click="CompleteTask(scheduledTask)" value="Complete" class="btn btn-xs btn-success" />
+                                                <input type="button" ng-click="Lock(scheduledTask)" value="Lock" class="btn btn-xs btn-default" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </table>
             </div>
         </div>
     </div>

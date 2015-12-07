@@ -257,6 +257,7 @@
     <Content Include="ApplicationInsights.config" />
     <None Include="Properties\PublishProfiles\imaginebeta - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\imaginebeta - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\imaginebeta.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
