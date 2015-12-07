@@ -32,7 +32,7 @@ namespace Imagine.Controllers
                     Id = task.Id,
                     Name = task.Name,
                     Type = type.ToString(),
-                    Hours = 1
+                    Hours = task.Duration
                 });
             }
             List<ScheduledTask> scheduled = context.ScheduledTasks.Include("Task").Where(x => x.Task.User.Id == userId).ToList();
@@ -61,7 +61,7 @@ namespace Imagine.Controllers
                         {
                             Id = schedule.Id,
                             Name = schedule.Task.Name,
-                            Hours = 1
+                            Hours = schedule.Task.Duration,
                         });
                     }
                 }
@@ -72,7 +72,7 @@ namespace Imagine.Controllers
         }
 
         [HttpPost]
-        public ActionResult Add(string id, string name, DateTime? date, DateTime? time)
+        public ActionResult Add(string id, string name, DateTime? date, DateTime? time, int? duration)
         {
             ApplicationDbContext context = new ApplicationDbContext();
 
@@ -97,7 +97,8 @@ namespace Imagine.Controllers
                         Created = DateTime.Now,
                         User = context.Users.First(x => x.Id == userId),
                         Modified = DateTime.Now,
-                        DueDate = dueDate
+                        DueDate = dueDate,
+                        Duration = duration.HasValue ? duration.Value : 0
                     });
                 context.SaveChanges();
             }
@@ -142,7 +143,7 @@ namespace Imagine.Controllers
                 {
                     Date = taskWithDueDate.DueDate.Value,
                     Id = Guid.NewGuid(),
-                    Hours = 1,
+                    Hours = taskWithDueDate.Duration,
                     Task = taskWithDueDate
                 });
             }
@@ -161,7 +162,7 @@ namespace Imagine.Controllers
                             context.ScheduledTasks.Add(new ScheduledTask
                             {
                                 Date = from.Value.AddDays(i),
-                                Hours = 1,
+                                Hours = recurring.Duration,
                                 Id = Guid.NewGuid(),
                                 Task = recurring
                             });
@@ -219,7 +220,7 @@ namespace Imagine.Controllers
                     context.ScheduledTasks.Add(new ScheduledTask
                     {
                         Date = newTime,
-                        Hours = 1,
+                        Hours = recurring.Duration,
                         Id = Guid.NewGuid(),
                         Task = recurring
                     });
@@ -232,7 +233,7 @@ namespace Imagine.Controllers
                 context.ScheduledTasks.Add(new ScheduledTask
                 {
                     Date = from.Value.Add(new TimeSpan(rand.Next(period.Days), rand.Next(period.Hours), rand.Next(period.Minutes), 0)),
-                    Hours = 1,
+                    Hours = pendingTask.Duration,
                     Id = Guid.NewGuid(),
                     Task = pendingTask
                 });
@@ -242,7 +243,7 @@ namespace Imagine.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddRecurringTask(string id, string name, string period, int frequency, DateTime? date)
+        public ActionResult AddRecurringTask(string id, string name, string period, int? frequency, DateTime? date, int duration)
         {
             ApplicationDbContext context = new ApplicationDbContext();
             string userId = User.Identity.GetUserId();
@@ -255,7 +256,8 @@ namespace Imagine.Controllers
                 User = context.Users.First(x => x.Id == userId),
                 Frequency = frequency,
                 Period = (Period)Enum.Parse(typeof(Period), period),
-                DueDate = date
+                DueDate = date,
+                Duration = duration
             };
             context.Tasks.Add(entity);
             context.SaveChanges();
