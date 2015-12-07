@@ -44,9 +44,10 @@ app.controller('taskController', function ($scope, $http) {
             $scope.AddTask($scope.Date, $scope.Time);
         }
         else {
+            var type = "Recurring";
             var task = { Id: taskId, Name: $scope.TaskName, Type: type };
             $scope.tasks.push(task);
-            $http.post("Home/AddRecurringTask", { id: taskId, name: $scope.TaskName, period: $scope.Period, frequency: $scope.Frequency });
+            $http.post("Home/AddRecurringTask", { id: taskId, name: $scope.TaskName, period: $scope.Period, frequency: $scope.Frequency, date: $scope.Date });
             $scope.TaskName = "";
             $scope.ShowRecurring = !$scope.ShowRecurring;
             $scope.Period = "";
@@ -54,6 +55,10 @@ app.controller('taskController', function ($scope, $http) {
         }
         $scope.TaskName = "";
         $scope.ShowAdvanced = !$scope.ShowAdvanced;
+    }
+
+    $scope.Lock = function (task) {
+        $http.post("Home/Lock", { id: task.Id })
     }
 
     $scope.RemoveTask = function (taskId, index) {
@@ -70,6 +75,10 @@ app.controller('taskController', function ($scope, $http) {
 
     $scope.EditTask = function (taskId, index) {
         alert("Edit not implemented");
+    }
+
+    $scope.CompleteTask = function (task) {
+        alert("Complete not implemented");
     }
 
     function S4() {

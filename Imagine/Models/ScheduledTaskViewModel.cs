@@ -7,8 +7,7 @@ namespace Imagine.Models
 {
     public class ScheduledTaskViewModel
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
         public DateTime Date { get; set; }
+        public List<TaskViewModel> Tasks { get; set; }
     }
 }

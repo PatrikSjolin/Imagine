@@ -57,8 +57,8 @@
                 <br /><br />
                 <h1>All Tasks</h1>
                 <br />
-                <table ng-repeat="task in tasks" class="table" style="background-color:white;width:300px">
-                    <tr>
+                <table class="table" style="background-color:white;width:300px">
+                    <tr ng-repeat="task in tasks">
                         <td>
                             <table width="220">
                                 <tr>
@@ -89,7 +89,7 @@
                 <br />
                 <br />
                 <input type="submit" ng-click="GenerateSchedule()" class="btn btn-primary btn-lg" value="Make my schedule" />
-
+                @*My Schedule*@
                 <div>
                     <br />
                     <h1>My Schedule</h1>
@@ -98,8 +98,21 @@
                         {
                             <tr>
                                 <td align="center">
-                                    <p>@scheduledTask.Date</p>
-                                    <p>@scheduledTask.Name</p>
+                                    <h4>@scheduledTask.Date.ToShortDateString() - @scheduledTask.Date.DayOfWeek</h4>
+                                    @foreach (var task in scheduledTask.Tasks)
+                                    {
+                                        <table width="230">
+                                            <tr>
+                                                <td>
+                                                    <p>@task.Name - @task.Hours h</p>
+                                                </td>
+                                                <td align="right">
+                                                    <input type="button" ng-click="CompleteTask(scheduledTask)" value="Complete" class="btn btn-xs btn-success" />
+                                                    <input type="button" ng-click="Lock(scheduledTask)" value="Lock" class="btn btn-xs btn-default" />
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    }
                                 </td>
                             </tr>
                         }
