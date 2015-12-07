@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 using System;
-using System.ComponentModel;
 
 namespace Imagine.Models
 {
     public enum Period
     {   
         Day,
+        WorkDay,
         Week,
         Month
     }
@@ -16,6 +16,7 @@ namespace Imagine.Models
         public Guid Id { get; set; }
         public virtual IdentityUser User { get; set; }
         public string Name { get; set; }
+        public int Duration { get; set; }
         public DateTime Created { get; set; }
         public DateTime? DueDate { get; set; }
         public DateTime? Modified { get; set; }

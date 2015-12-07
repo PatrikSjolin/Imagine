@@ -41,6 +41,9 @@
                             <input type="radio" ng-model="Period" name="recurrenceOption" value="Day" />Daily
                         </label>
                         <label class="radio-inline">
+                            <input type="radio" ng-model="Period" name="recurrenceOption" value="WorkDay" />Work day
+                        </label>
+                        <label class="radio-inline">
                             <input type="radio" ng-model="Period" name="recurrenceOption" value="Week" />Weekly
                         </label>
                         <label class="radio-inline">
@@ -97,11 +100,11 @@
                         @foreach (var scheduledTask in Model.ScheduledTasks)
                         {
                             <tr>
-                                <td align="center">
+                                <td>
                                     <h4>@scheduledTask.Date.ToShortDateString() - @scheduledTask.Date.DayOfWeek</h4>
                                     @foreach (var task in scheduledTask.Tasks)
                                     {
-                                        <table width="230">
+                                        <table width="300">
                                             <tr>
                                                 <td>
                                                     <p>@task.Name - @task.Hours h</p>
