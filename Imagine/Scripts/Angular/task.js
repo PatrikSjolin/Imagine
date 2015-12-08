@@ -6,6 +6,7 @@ app.controller('taskController', function ($scope, $http) {
     $scope.Init = function (tasks) {
         $scope.tasks = tasks.Tasks;
         $scope.TimeBased = true;
+        $scope.Period = "Month";
     };
 
     $scope.AddTask = function () {
