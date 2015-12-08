@@ -14,17 +14,17 @@
             @*Add Task*@
             <div class="col-md-8">
                 <h1>Add Task</h1><br />
-                <form class="form-horizontal">
+                <form id="testForm">
                     <div class="form-group">
                         <input type="text" class="form-control" ng-disabled="ShowAdvanced" ng-model="TaskName" autofocus placeholder="Enter task name" />
                     </div>
+
+                    @*Knapp för add*@
+                    <input type="submit" ng-click="AddTask()" ng-hide="ShowAdvanced" class="btn btn-success" value="Pending" />
+                    <input type="submit" ng-click="AddEvent()" ng-hide="ShowAdvanced" class="btn btn-warning" value="Event" />
+                    <input type="submit" ng-click="AddPending()" ng-hide="ShowAdvanced" class="btn btn-primary disabled" value="On the go" />
+
                 </form>
-
-                @*Knapp för add*@
-                <input type="submit" ng-click="AddTask()" ng-hide="ShowAdvanced" class="btn btn-success" value="Pending" />
-                <input type="submit" ng-click="AddEvent()" ng-hide="ShowAdvanced" class="btn btn-warning" value="Event" />
-                <input type="submit" ng-click="AddPending()" ng-hide="ShowAdvanced" class="btn btn-primary disabled" value="On the go" />
-
 
                 <div ng-show="ShowAdvanced">
                     <table width="330">
@@ -113,7 +113,7 @@
             <div class="col-md-8">
                 <h1>All Tasks</h1>
                 <br />
-                <table class="table" style="background-color:white;width:300px">
+                <table class="table" style="background-color:white;width:350px">
                     <tr ng-repeat="task in tasks">
                         <td>
                             {{task.Name}}
@@ -169,3 +169,8 @@ else
     <br />
     @Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
 }
+<script>
+    $('#testForm').validate({
+
+    });
+</script>

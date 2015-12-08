@@ -19,7 +19,7 @@ namespace Imagine.Controllers
             foreach (var task in context.Tasks.Where(x => x.User.Id == userId).OrderBy(x => x.Created))
             {
                 TaskType type = TaskType.Pending;
-                if(task.Frequency != null)
+                if(task.Period != null)
                 {
                     type = TaskType.Recurring;
                 }
@@ -85,6 +85,14 @@ namespace Imagine.Controllers
             if(date.HasValue && time.HasValue)
             {
                 dueDate = new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, time.Value.Hour, time.Value.Minute, time.Value.Second);
+            }
+            else if (date.HasValue)
+            {
+                dueDate = new DateTime(date.Value.Year, date.Value.Month, date.Value.Day);
+            }
+            else if(time.HasValue)
+            {
+                dueDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, time.Value.Hour, time.Value.Minute, time.Value.Second);
             }
 
             if (!full)
@@ -180,7 +188,12 @@ namespace Imagine.Controllers
                     days = 30;
                 }
 
-                double daysBetweenActivities = days / (double)recurring.Frequency;
+                double frequency = 1;
+                if (recurring.Frequency.HasValue)
+                {
+                    frequency = recurring.Frequency.Value;
+                }
+                double daysBetweenActivities = days / frequency;
 
                 DateTime startDate = from.Value;
                 if(recurring.DueDate.HasValue)
@@ -243,7 +256,7 @@ namespace Imagine.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddRecurringTask(string id, string name, string period, int? frequency, DateTime? date, int duration)
+        public ActionResult AddRecurringTask(string id, string name, string period, int? frequency, DateTime? date, int? duration)
         {
             ApplicationDbContext context = new ApplicationDbContext();
             string userId = User.Identity.GetUserId();
@@ -257,7 +270,7 @@ namespace Imagine.Controllers
                 Frequency = frequency,
                 Period = (Period)Enum.Parse(typeof(Period), period),
                 DueDate = date,
-                Duration = duration
+                Duration = duration != null ? duration.Value : 0
             };
             context.Tasks.Add(entity);
             context.SaveChanges();

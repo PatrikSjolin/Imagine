@@ -30,18 +30,6 @@ app.controller('taskController', function ($scope, $http) {
 
     };
 
-    $scope.TimeBased = function () {
-        $scope.TimeBased = !$scope.TimeBased;
-    }
-
-    $scope.AddEvent = function () {
-        $scope.ShowAdvanced = !$scope.ShowAdvanced;
-    }
-
-    $scope.AddRecurring = function () {
-        $scope.ShowRecurring = !$scope.ShowRecurring;
-    }
-
     $scope.AddRecurringTask = function () {
         var taskId = GenerateGuid();
 
@@ -63,6 +51,18 @@ app.controller('taskController', function ($scope, $http) {
         }
     }
 
+    $scope.TimeBased = function () {
+        $scope.TimeBased = !$scope.TimeBased;
+    }
+
+    $scope.AddEvent = function () {
+        $scope.ShowAdvanced = !$scope.ShowAdvanced;
+    }
+
+    $scope.AddRecurring = function () {
+        $scope.ShowRecurring = !$scope.ShowRecurring;
+    }
+
     function Clear() {
         $scope.TaskName = "";
         $scope.Period = "";
@@ -72,7 +72,7 @@ app.controller('taskController', function ($scope, $http) {
         $scope.Time = "";
         $scope.ShowAdvanced = false;
         $scope.ShowRecurring = false;
-        $scope.TimeBased = false;
+        $scope.TimeBased = true;
     }
 
     $scope.Lock = function (task) {
