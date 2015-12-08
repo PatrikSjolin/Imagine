@@ -155,8 +155,8 @@ namespace Imagine.Controllers
                     Task = taskWithDueDate
                 });
             }
-
-            Random rand = new Random();
+            int seed = (int)DateTime.Now.Ticks & 0x0000FFFF;
+            Random rand = new Random(seed);
             TimeSpan period = to.Value.Subtract(from.Value);
 
             foreach (var recurring in recurringTasks)
