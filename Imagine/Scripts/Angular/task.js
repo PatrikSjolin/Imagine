@@ -1,12 +1,13 @@
-﻿var app = angular.module('taskApp', []);
+﻿var app = angular.module('taskApp', ['ui.bootstrap']);
 
-app.controller('taskController', function ($scope, $http) {
+app.controller('taskController', function ($scope, $http, $uibModal) {
     $scope.tasks = [];
 
     $scope.Init = function (tasks) {
         $scope.tasks = tasks.Tasks;
         $scope.TimeBased = true;
         $scope.Period = "Month";
+        //$scope.From = "2015-12-13";
     };
 
     $scope.AddTask = function () {
@@ -52,6 +53,10 @@ app.controller('taskController', function ($scope, $http) {
         }
     }
 
+    $scope.AddOnTheGo = function () {
+
+    }
+
     $scope.TimeBased = function () {
         $scope.TimeBased = !$scope.TimeBased;
     }
@@ -93,11 +98,20 @@ app.controller('taskController', function ($scope, $http) {
     }
 
     $scope.EditTask = function (taskId, index) {
-        alert("Edit not implemented");
+        var modalInstance = $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'myModalContent.html',
+            controller: 'ModalInstanceCtrl',
+            size: 'sm',
+            resolve: {
+                items: function () {
+                    return $scope.items;
+                }
+            }
+        });
     }
 
     $scope.CompleteTask = function (task) {
-        alert("Complete not implemented");
     }
 
     function S4() {
@@ -107,4 +121,19 @@ app.controller('taskController', function ($scope, $http) {
     function GenerateGuid() {
         return (S4() + S4() + "-" + S4() + "-4" + S4().substr(0, 3) + "-" + S4() + "-" + S4() + S4() + S4()).toLowerCase();
     }
+});
+angular.module('taskApp').controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, items) {
+
+    //$scope.items = items;
+    //$scope.selected = {
+    //    item: $scope.items[0]
+    //};
+
+    $scope.ok = function () {
+        $uibModalInstance.close($scope.selected.item);
+    };
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
 });
