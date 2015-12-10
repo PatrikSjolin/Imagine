@@ -7,6 +7,7 @@ app.controller('taskController', function ($scope, $http, $uibModal) {
         $scope.tasks = tasks.Tasks;
         $scope.TimeBased = true;
         $scope.Period = "Month";
+        $scope.Generating = false;
         //$scope.From = "2015-12-13";
     };
 
@@ -92,9 +93,10 @@ app.controller('taskController', function ($scope, $http, $uibModal) {
 
     $scope.GenerateSchedule = function () {
         $http.post("Home/AddSchedule", { from: $scope.From, to: $scope.To });
+        $scope.Generating = true;
         setTimeout(function () {
             window.location.reload();
-        }, 1500);
+        }, 5000);
     }
 
     $scope.EditTask = function (taskId, index) {

@@ -98,8 +98,8 @@
                 <input type="date" ng-model="To" min="@DateTime.Today.AddDays(1).ToShortDateString()" value="@DateTime.Today.AddDays(7).ToShortDateString()" />
                 <br />
                 <br />
-                <input type="submit" ng-click="GenerateSchedule()" class="btn btn-primary btn-lg" value="Make my schedule" />
-
+                <input type="submit" ng-click="GenerateSchedule()" ng-hide="Generating" class="btn btn-primary btn-lg" value="Make my schedule" />
+                <h4 ng-show="Generating">Generating your schedule... Please wait ~5 seconds and the page will reload...</h4>
             </div>
         </div>
 
