@@ -5,10 +5,10 @@ app.controller('taskController', function ($scope, $http, $uibModal) {
 
     $scope.Init = function (tasks) {
         $scope.tasks = tasks.Tasks;
+        $scope.ScheduledTasks = tasks.ScheduledTasks;
         $scope.TimeBased = true;
         $scope.Period = "Month";
         $scope.Generating = false;
-        //$scope.From = "2015-12-13";
     };
 
     $scope.AddTask = function () {
@@ -125,10 +125,11 @@ app.controller('taskController', function ($scope, $http, $uibModal) {
         return (S4() + S4() + "-" + S4() + "-4" + S4().substr(0, 3) + "-" + S4() + "-" + S4() + S4() + S4()).toLowerCase();
     }
 });
+
 angular.module('taskApp').controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, $http, items) {
     $scope.Task = items;
     $scope.TaskName = $scope.Task.Name;
-    $scope.Duration = $scope.Task.Duration;
+    $scope.Duration = $scope.Task.Hours;
 
     $scope.ok = function () {
         $scope.Task.Name = $scope.TaskName;
