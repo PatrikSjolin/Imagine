@@ -100,6 +100,7 @@ app.controller('taskController', function ($scope, $http, $uibModal) {
     }
 
     $scope.EditTask = function (taskId, index) {
+        $scope.Items = taskId;
         var modalInstance = $uibModal.open({
             animation: $scope.animationsEnabled,
             templateUrl: 'myModalContent.html',
@@ -107,7 +108,7 @@ app.controller('taskController', function ($scope, $http, $uibModal) {
             size: 'sm',
             resolve: {
                 items: function () {
-                    return $scope.items;
+                    return $scope.Items;
                 }
             }
         });
@@ -124,15 +125,16 @@ app.controller('taskController', function ($scope, $http, $uibModal) {
         return (S4() + S4() + "-" + S4() + "-4" + S4().substr(0, 3) + "-" + S4() + "-" + S4() + S4() + S4()).toLowerCase();
     }
 });
-angular.module('taskApp').controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, items) {
-
-    //$scope.items = items;
-    //$scope.selected = {
-    //    item: $scope.items[0]
-    //};
+angular.module('taskApp').controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, $http, items) {
+    $scope.Task = items;
+    $scope.TaskName = $scope.Task.Name;
+    $scope.Duration = $scope.Task.Duration;
 
     $scope.ok = function () {
-        $uibModalInstance.close($scope.selected.item);
+        $scope.Task.Name = $scope.TaskName;
+        $scope.Task.Duration = $scope.Duration;
+        $http.post("Home/Edit", { id: $scope.Task.Id, name: $scope.Task.Name, duration : $scope.Task.Duration });
+        $uibModalInstance.close($scope.Task);
     };
 
     $scope.cancel = function () {

@@ -114,6 +114,39 @@ namespace Imagine.Controllers
         }
 
         [HttpPost]
+        public ActionResult AddRecurringTask(string id, string name, string period, int? frequency, DateTime? date, int? duration)
+        {
+            ApplicationDbContext context = new ApplicationDbContext();
+            string userId = User.Identity.GetUserId();
+
+            TaskEntity entity = new TaskEntity
+            {
+                Created = DateTime.Now,
+                Id = new Guid(id),
+                Name = name,
+                User = context.Users.First(x => x.Id == userId),
+                Frequency = frequency,
+                Period = (Period)Enum.Parse(typeof(Period), period),
+                DueDate = date,
+                Duration = duration != null ? duration.Value : 0
+            };
+            context.Tasks.Add(entity);
+            context.SaveChanges();
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Edit(string id, string name, string duration)
+        {
+            ApplicationDbContext context = new ApplicationDbContext();
+            var task = context.Tasks.First(x => x.Id == new Guid(id));
+            task.Name = name;
+            task.Duration = int.Parse(duration);
+            context.SaveChanges();
+            return View();
+        }
+
+        [HttpPost]
         public ActionResult Remove(string id)
         {
             ApplicationDbContext context = new ApplicationDbContext();
@@ -253,28 +286,6 @@ namespace Imagine.Controllers
             }
             context.SaveChanges();
             return Index();
-        }
-
-        [HttpPost]
-        public ActionResult AddRecurringTask(string id, string name, string period, int? frequency, DateTime? date, int? duration)
-        {
-            ApplicationDbContext context = new ApplicationDbContext();
-            string userId = User.Identity.GetUserId();
-
-            TaskEntity entity = new TaskEntity
-            {
-                Created = DateTime.Now,
-                Id = new Guid(id),
-                Name = name,
-                User = context.Users.First(x => x.Id == userId),
-                Frequency = frequency,
-                Period = (Period)Enum.Parse(typeof(Period), period),
-                DueDate = date,
-                Duration = duration != null ? duration.Value : 0
-            };
-            context.Tasks.Add(entity);
-            context.SaveChanges();
-            return View();
         }
     }
 }
