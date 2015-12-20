@@ -16,7 +16,7 @@
                 <h1>Add Task</h1><br />
                 <form id="testForm">
                     <div class="form-group">
-                        <input type="text" class="form-control" ng-disabled="ShowAdvanced" ng-model="TaskName" autofocus placeholder="Enter task name" />
+                        <input type="text" class="form-control" ng-model="TaskName" autofocus placeholder="Enter task name" id="taskInputField"/>
                     </div>
                     @*Knapp för add*@
                     <input type="submit" ng-click="AddTask()" ng-hide="ShowAdvanced" class="btn btn-success" value="Pending" />
@@ -39,6 +39,7 @@
                                 </div>
                             </td>
                             <td>
+                                <input type="submit" ng-click="CancelAdd()" value="Cancel" class="btn btn-default" />
                                 <input type="submit" ng-click="AddRecurringTask()" value="Add" class="btn btn-warning" />
                             </td>
                         </tr>

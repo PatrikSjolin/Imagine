@@ -1,7 +1,6 @@
 ﻿var app = angular.module('taskApp', ['ui.bootstrap']);
 
-app.controller('taskController', function ($scope, $http, $uibModal) {
-    $scope.tasks = [];
+app.controller('taskController', function ($scope, $http, $window, $uibModal) {
 
     $scope.Init = function (tasks) {
         $scope.Tasks = tasks.Tasks;
@@ -31,6 +30,8 @@ app.controller('taskController', function ($scope, $http, $uibModal) {
         });
         Clear();
 
+        var inputField = $window.document.getElementById("taskInputField");
+        inputField.focus();
     };
 
     $scope.AddRecurringTask = function () {
@@ -52,10 +53,14 @@ app.controller('taskController', function ($scope, $http, $uibModal) {
             }
             Clear();
         }
+
+        var inputField = $window.document.getElementById("taskInputField");
+        inputField.focus();
     }
 
     $scope.AddOnTheGo = function () {
-
+        var inputField = $window.document.getElementById("taskInputField");
+        inputField.focus();
     }
 
     $scope.TimeBased = function () {
@@ -83,24 +88,34 @@ app.controller('taskController', function ($scope, $http, $uibModal) {
     }
 
     $scope.Lock = function (task) {
-        $http.post("Home/Lock", { id: task.Id })
+        $http.post("Home/Lock", { id: task.Id });
+        var inputField = $window.document.getElementById("taskInputField");
+        inputField.focus();
     }
 
     $scope.RemoveTask = function (taskId, index) {
-        $scope.tasks.splice(index, 1);
+        $scope.Tasks.splice(index, 1);
         $http.post("Home/Remove", { id: taskId.Id });
+
+        var inputField = $window.document.getElementById("taskInputField");
+        inputField.focus();
     }
 
     $scope.GenerateSchedule = function () {
         $scope.Generating = true;
         $http.post("Home/AddSchedule", { from: $scope.From, to: $scope.To }).success(SuccessReload);
+
+        var inputField = $window.document.getElementById("taskInputField");
+        inputField.focus();
     }
 
-    function SuccessReload(data)
-    {
-        $scope.ScheduledTasks = data.Data;
-        $scope.Generating = false;
-    };
+    $scope.CancelAdd = function () {
+        var name = $scope.TaskName;
+        Clear();
+        $scope.TaskName = name;
+        var inputField = $window.document.getElementById("taskInputField");
+        inputField.focus();
+    }
 
     $scope.EditTask = function (taskId, index) {
         $scope.Items = taskId;
@@ -118,6 +133,8 @@ app.controller('taskController', function ($scope, $http, $uibModal) {
     }
 
     $scope.CompleteTask = function (task) {
+        var inputField = $window.document.getElementById("taskInputField");
+        inputField.focus();
     }
 
     function S4() {
@@ -127,6 +144,11 @@ app.controller('taskController', function ($scope, $http, $uibModal) {
     function GenerateGuid() {
         return (S4() + S4() + "-" + S4() + "-4" + S4().substr(0, 3) + "-" + S4() + "-" + S4() + S4() + S4()).toLowerCase();
     }
+
+    function SuccessReload(data) {
+        $scope.ScheduledTasks = data.Data;
+        $scope.Generating = false;
+    };
 });
 
 angular.module('taskApp').controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, $http, items) {
