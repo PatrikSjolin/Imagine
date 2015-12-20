@@ -90,11 +90,11 @@
             <div class="col-md-4">
                 <h1>Schedule</h1><br />
                 <label>From</label>
-                <input type="date" ng-model="From" min="@DateTime.Today.ToShortDateString()" value="@DateTime.Today.ToShortDateString()" />
+                <input type="date" ng-model="From" min="@DateTime.Today.ToShortDateString()" />
                 <br />
                 <br />
                 <label>To</label>
-                <input type="date" ng-model="To" min="@DateTime.Today.AddDays(1).ToShortDateString()" value="@DateTime.Today.AddDays(7).ToShortDateString()" />
+                <input type="date" ng-model="To" min="@DateTime.Today.AddDays(1).ToShortDateString()" />
                 <br />
                 <br />
                 <input type="submit" ng-click="GenerateSchedule()" ng-hide="Generating" class="btn btn-primary btn-lg" value="Make my schedule" />

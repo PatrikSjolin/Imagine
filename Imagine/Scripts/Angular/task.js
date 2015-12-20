@@ -150,6 +150,10 @@ app.controller('taskController', function ($scope, $http, $window, $uibModal) {
 
     function SuccessReload(data) {
         $scope.ScheduledTasks = data.Data;
+        for (var i = 0; i < $scope.ScheduledTasks.length; i++) {
+            var date = $scope.ScheduledTasks[i].Date;
+            $scope.ScheduledTasks[i].Date = new Date(parseInt(date.replace('/Date(', '')));
+        }
         $scope.Generating = false;
     };
 });
