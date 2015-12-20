@@ -36,8 +36,16 @@ namespace Imagine.Controllers
                 });
             }
             List<ScheduledTask> scheduled = context.ScheduledTasks.Include("Task").Where(x => x.Task.User.Id == userId).ToList();
+            
+            vm.ScheduledTasks = GetScheduledTasks(scheduled);
 
-            vm.ScheduledTasks = new List<ScheduledTaskViewModel>();
+            return View(vm);
+        }
+
+        private List<ScheduledTaskViewModel> GetScheduledTasks(List<ScheduledTask> scheduled)
+        {
+            List<ScheduledTaskViewModel> model = new List<ScheduledTaskViewModel>();
+
             if (scheduled.Count > 0)
             {
                 DateTime min = scheduled.Min(x => x.Date);
@@ -45,7 +53,7 @@ namespace Imagine.Controllers
 
                 for (int i = 0; i <= max.Subtract(min).Days; i++)
                 {
-                    vm.ScheduledTasks.Add(new ScheduledTaskViewModel
+                    model.Add(new ScheduledTaskViewModel
                     {
                         Date = min.Date.AddDays(i),
                         Tasks = new List<TaskViewModel>()
@@ -54,7 +62,7 @@ namespace Imagine.Controllers
 
                 foreach (var schedule in scheduled.OrderBy(x => x.Date))
                 {
-                    var scheduledTask = vm.ScheduledTasks.FirstOrDefault(x => x.Date.ToShortDateString() == schedule.Date.ToShortDateString());
+                    var scheduledTask = model.FirstOrDefault(x => x.Date.ToShortDateString() == schedule.Date.ToShortDateString());
                     if (scheduledTask != null)
                     {
                         scheduledTask.Tasks.Add(new TaskViewModel
@@ -65,12 +73,10 @@ namespace Imagine.Controllers
                         });
                     }
                 }
-
             }
 
-            return View(vm);
+            return model;
         }
-
         [HttpPost]
         public ActionResult Add(string id, string name, DateTime? date, DateTime? time, int? duration)
         {
@@ -110,7 +116,8 @@ namespace Imagine.Controllers
                     });
                 context.SaveChanges();
             }
-            return View();
+
+            return Json(new { Code = 200 });
         }
 
         [HttpPost]
@@ -132,7 +139,8 @@ namespace Imagine.Controllers
             };
             context.Tasks.Add(entity);
             context.SaveChanges();
-            return View();
+
+            return Json(new { Code = 200 });
         }
 
         [HttpPost]
@@ -143,7 +151,8 @@ namespace Imagine.Controllers
             task.Name = name;
             task.Duration = int.Parse(duration);
             context.SaveChanges();
-            return View();
+
+            return Json(new { Code = 200 });
         }
 
         [HttpPost]
@@ -153,7 +162,8 @@ namespace Imagine.Controllers
             context.Tasks.Remove(context.Tasks.First(x => x.Id == new Guid(id)));
             context.ScheduledTasks.RemoveRange(context.ScheduledTasks.Where(x => x.Task.Id == new Guid(id)));
             context.SaveChanges();
-            return View();
+
+            return Json(new { Code = 200 });
         }
 
         [HttpPost]
@@ -285,7 +295,17 @@ namespace Imagine.Controllers
                 });
             }
             context.SaveChanges();
-            return Index();
+
+            List<ScheduledTask> scheduled = context.ScheduledTasks.Include("Task").Where(x => x.Task.User.Id == userId).ToList();
+            var scheduledTasks = GetScheduledTasks(scheduled);
+
+            return Json(new { Code = 200, Data = scheduledTasks });
+        }
+
+        [HttpPost]
+        public ActionResult Lock(string id)
+        {
+            return Json(new { Code = 200 });
         }
     }
 }

@@ -16,7 +16,7 @@
                 <h1>Add Task</h1><br />
                 <form id="testForm">
                     <div class="form-group">
-                        <input type="text" class="form-control" required ng-disabled="ShowAdvanced" ng-model="TaskName" autofocus placeholder="Enter task name" />
+                        <input type="text" class="form-control" ng-disabled="ShowAdvanced" ng-model="TaskName" autofocus placeholder="Enter task name" />
                     </div>
                     @*Knapp för add*@
                     <input type="submit" ng-click="AddTask()" ng-hide="ShowAdvanced" class="btn btn-success" value="Pending" />
@@ -69,7 +69,7 @@
                         </div>
                         <br />
                         <label class="radio-inline">
-                            <input type="radio" ng-model="Period"  name="recurrenceOption" value="Day" />Daily
+                            <input type="radio" ng-model="Period" name="recurrenceOption" value="Day" />Daily
                         </label>
                         <label class="radio-inline">
                             <input type="radio" ng-model="Period" name="recurrenceOption" value="WorkDay" />Work day
@@ -97,7 +97,7 @@
                 <br />
                 <br />
                 <input type="submit" ng-click="GenerateSchedule()" ng-hide="Generating" class="btn btn-primary btn-lg" value="Make my schedule" />
-                <h4 ng-show="Generating">Generating your schedule... Please wait ~5 seconds and the page will reload...</h4>
+                <h4 ng-show="Generating">Generating your schedule...</h4>
             </div>
         </div>
 
@@ -112,7 +112,7 @@
                 <h1>All Tasks</h1>
                 <br />
                 <table class="table table-hover" style="background-color:white;width:350px">
-                    <tr ng-repeat="task in tasks">
+                    <tr ng-repeat="task in Tasks">
                         <td>
                             {{task.Name}}
                         </td>
@@ -131,28 +131,22 @@
             <div class="col-md-4">
                 <h1>My Schedule</h1>
                 <table class="table table-striped" style="background-color:white; width:300px">
-                    @foreach (var scheduledTask in Model.ScheduledTasks)
-                    {
-                        <tr>
-                            <td>
-                                <h4>@scheduledTask.Date.ToShortDateString() - @scheduledTask.Date.DayOfWeek</h4>
-                                @foreach (var task in scheduledTask.Tasks)
-                                {
-                                    <table width="350">
-                                        <tr>
-                                            <td>
-                                                <p>@task.Name - @task.Hours h</p>
-                                            </td>
-                                            <td align="right">
-                                                <input type="button" ng-click="CompleteTask(scheduledTask)" value="Complete" class="btn btn-xs btn-success" />
-                                                <input type="button" ng-click="Lock(scheduledTask)" value="Lock" class="btn btn-xs btn-default" />
-                                            </td>
-                                        </tr>
-                                    </table>
-                                }
-                            </td>
-                        </tr>
-                    }
+                    <tr ng-repeat="st in ScheduledTasks">
+                        <td>
+                            <h4>{{st.Date | date:'yyyy-MM-dd - EEEE'}}</h4>
+                            <table width="350">
+                                <tr ng-repeat="scheduledTask in st.Tasks">
+                                    <td>
+                                        <p>{{scheduledTask.Name}} - {{scheduledTask.Hours}} h</p>
+                                    </td>
+                                    <td align="right">
+                                        <input type="button" ng-click="CompleteTask(scheduledTask)" value="Complete" class="btn btn-xs btn-success" />
+                                        <input type="button" ng-click="Lock(scheduledTask)" value="Lock" class="btn btn-xs btn-default" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
                 </table>
             </div>
         </div>

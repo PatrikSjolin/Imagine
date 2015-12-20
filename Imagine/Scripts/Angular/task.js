@@ -4,7 +4,7 @@ app.controller('taskController', function ($scope, $http, $uibModal) {
     $scope.tasks = [];
 
     $scope.Init = function (tasks) {
-        $scope.tasks = tasks.Tasks;
+        $scope.Tasks = tasks.Tasks;
         $scope.ScheduledTasks = tasks.ScheduledTasks;
         $scope.TimeBased = true;
         $scope.Period = "Month";
@@ -22,7 +22,7 @@ app.controller('taskController', function ($scope, $http, $uibModal) {
             type = "Event";
         }
         var task = { Id: taskId, Name: $scope.TaskName, Type: type }
-        $scope.tasks.push(task);
+        $scope.Tasks.push(task);
 
         $http({
             url: "Home/Add",
@@ -42,7 +42,7 @@ app.controller('taskController', function ($scope, $http, $uibModal) {
         else {
             var type = "Recurring";
             var task = { Id: taskId, Name: $scope.TaskName, Type: type };
-            $scope.tasks.push(task);
+            $scope.Tasks.push(task);
             if ($scope.TimeBased) {
 
                 $http.post("Home/AddRecurringTask", { id: taskId, name: $scope.TaskName, period: $scope.Period, frequency: null, date: $scope.Date, duration: $scope.Duration });
@@ -92,12 +92,15 @@ app.controller('taskController', function ($scope, $http, $uibModal) {
     }
 
     $scope.GenerateSchedule = function () {
-        $http.post("Home/AddSchedule", { from: $scope.From, to: $scope.To });
         $scope.Generating = true;
-        setTimeout(function () {
-            window.location.reload();
-        }, 5000);
+        $http.post("Home/AddSchedule", { from: $scope.From, to: $scope.To }).success(SuccessReload);
     }
+
+    function SuccessReload(data)
+    {
+        $scope.ScheduledTasks = data.Data;
+        $scope.Generating = false;
+    };
 
     $scope.EditTask = function (taskId, index) {
         $scope.Items = taskId;
