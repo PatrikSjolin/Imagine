@@ -2,12 +2,16 @@
 
 app.controller('taskController', function ($scope, $http, $window, $uibModal) {
 
-    $scope.Init = function (tasks) {
+    $scope.Init = function (tasks, from, to, time) {
         $scope.Tasks = tasks.Tasks;
         $scope.ScheduledTasks = tasks.ScheduledTasks;
         $scope.TimeBased = true;
         $scope.Period = "Month";
         $scope.Generating = false;
+        $scope.From = new Date(Date.parse(from));
+        $scope.To = new Date(Date.parse(to));
+        $scope.Date = new Date(Date.parse(from));
+        $scope.Time = new Date(Date.parse(time));
     };
 
     $scope.AddTask = function () {
@@ -45,7 +49,6 @@ app.controller('taskController', function ($scope, $http, $window, $uibModal) {
             var task = { Id: taskId, Name: $scope.TaskName, Type: type };
             $scope.Tasks.push(task);
             if ($scope.TimeBased) {
-
                 $http.post("Home/AddRecurringTask", { id: taskId, name: $scope.TaskName, period: $scope.Period, frequency: null, date: $scope.Date, duration: $scope.Duration });
             }
             else {

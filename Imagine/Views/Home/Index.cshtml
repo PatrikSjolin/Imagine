@@ -6,7 +6,7 @@
 
 @if (User.Identity.IsAuthenticated)
 {
-    <div ng-controller="taskController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
+    <div ng-controller="taskController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model), @Newtonsoft.Json.JsonConvert.SerializeObject(DateTime.Now), @Newtonsoft.Json.JsonConvert.SerializeObject(DateTime.Now.AddMonths(1)), @Newtonsoft.Json.JsonConvert.SerializeObject(new DateTime(2015, 01, 01, 00, 00, 00)))">
         <br />
         <br />
         <div class="row">
@@ -16,7 +16,7 @@
                 <h1>Add Task</h1><br />
                 <form id="testForm">
                     <div class="form-group">
-                        <input type="text" class="form-control" ng-model="TaskName" autofocus placeholder="Enter task name" id="taskInputField"/>
+                        <input type="text" class="form-control" ng-model="TaskName" autofocus placeholder="Enter task name" id="taskInputField" />
                     </div>
                     @*Knapp för add*@
                     <input type="submit" ng-click="AddTask()" ng-hide="ShowAdvanced" class="btn btn-success" value="Pending" />
@@ -39,13 +39,20 @@
                                 </div>
                             </td>
                             <td>
-                                <input type="submit" ng-click="CancelAdd()" value="Cancel" class="btn btn-default" />
                                 <input type="submit" ng-click="AddRecurringTask()" value="Add" class="btn btn-warning" />
+                                <input type="submit" ng-click="CancelAdd()" value="Cancel" class="btn btn-default" />
                             </td>
                         </tr>
                     </table>
+
+                    <div ng-show="ShowRecurring">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" class="btn btn-warning" ng-model="TimeBased" value="TimeBased" />Time based
+                            </label>
+                        </div>
+                    </div>
                     <div ng-show="TimeBased || !ShowRecurring">
-                        <br />
                         <label>
                             Date
                             <input type="date" ng-model="Date" />
@@ -56,19 +63,12 @@
                         </label>
                     </div>
                     <div ng-hide="TimeBased || !ShowRecurring">
-                        <br />
                         <label>
                             Frequency
                             <input type="text" placeholder="Frequency" ng-model="Frequency" />
                         </label>
                     </div>
                     <div ng-show="ShowRecurring">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" class="btn btn-warning" ng-model="TimeBased" value="TimeBased" />Time based
-                            </label>
-                        </div>
-                        <br />
                         <label class="radio-inline">
                             <input type="radio" ng-model="Period" name="recurrenceOption" value="Day" />Daily
                         </label>
@@ -81,8 +81,8 @@
                         <label class="radio-inline">
                             <input type="radio" ng-model="Period" name="recurrenceOption" value="Month" />Monthly
                         </label>
-                        <h4 ng-hide="TimeBased">Event will occur {{Frequency}} times each {{Period}}</h4>
-                        <h4 ng-show="TimeBased">Event will occur on {{Date}} each {{Period}}</h4>
+                        <h5 ng-hide="TimeBased">Event will occur {{Frequency}} times each {{Period}}</h5>
+                        <h5 ng-show="TimeBased">Event will occur on {{Date | date: yyyy-MM-dd}} each {{Period}}</h5>
                     </div>
                 </div>
             </div>
