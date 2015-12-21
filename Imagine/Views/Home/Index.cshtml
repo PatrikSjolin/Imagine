@@ -112,7 +112,7 @@
             <div class="col-md-8">
                 <h1>All Tasks</h1>
                 <br />
-                <table class="table table-hover" style="background-color:white;width:350px">
+                <table class="table table-hover" style="background-color:white;width:360px">
                     <tr ng-repeat="task in Tasks">
                         <td>
                             {{task.Name}}
@@ -121,6 +121,7 @@
                             {{task.Type}}
                         </td>
                         <td align="right" valign="middle">
+                            @*<input type="submit" class="btn btn-xs btn-success" value="Scheduled" ng-show="{{task.Scheduled}}" />*@
                             <input type="submit" ng-click="EditTask(task, $index)" class="btn btn-xs btn-primary" value="Edit" />
                             <input type="submit" ng-click="RemoveTask(task, $index)" class="btn btn-xs btn-danger" value="Remove" />
                         </td>

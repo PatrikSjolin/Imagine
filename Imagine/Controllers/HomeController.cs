@@ -10,7 +10,6 @@ namespace Imagine.Controllers
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext context;
-        private readonly string userId;
         private readonly Random random;
 
         public HomeController() : base()
@@ -28,6 +27,11 @@ namespace Imagine.Controllers
 
             vm.Tasks = new List<TaskViewModel>();
 
+
+            List<ScheduledTask> scheduled = context.ScheduledTasks.Include("Task").Where(x => x.Task.User.Id == userId).ToList();
+
+            vm.ScheduledTasks = GetScheduledTasks(scheduled);
+
             foreach (var task in context.Tasks.Where(x => x.User.Id == userId).OrderBy(x => x.Created))
             {
                 TaskType type = TaskType.Pending;
@@ -43,13 +47,11 @@ namespace Imagine.Controllers
                 {
                     Id = task.Id,
                     Name = task.Name,
-                    Type = type.ToString(),
-                    Hours = task.Duration
+                    Type = task.TaskType.ToString(),
+                    Hours = task.Duration,
+                    Scheduled = scheduled.Any(x => x.Task.Id == task.Id)
                 });
             }
-            List<ScheduledTask> scheduled = context.ScheduledTasks.Include("Task").Where(x => x.Task.User.Id == userId).ToList();
-
-            vm.ScheduledTasks = GetScheduledTasks(scheduled);
 
             return View(vm);
         }
@@ -93,6 +95,7 @@ namespace Imagine.Controllers
         [HttpPost]
         public ActionResult Add(string id, string name, DateTime? date, DateTime? time, int? duration)
         {
+            TaskType taskType = TaskType.Pending;
             string userId = User.Identity.GetUserId();
 
             bool full = context.Tasks.Count(x => x.User.Id == userId) > 20;
@@ -102,14 +105,17 @@ namespace Imagine.Controllers
             if (date.HasValue && time.HasValue)
             {
                 dueDate = new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, time.Value.Hour, time.Value.Minute, time.Value.Second);
+                taskType = TaskType.Event;
             }
             else if (date.HasValue)
             {
                 dueDate = new DateTime(date.Value.Year, date.Value.Month, date.Value.Day);
+                taskType = TaskType.Event;
             }
             else if (time.HasValue)
             {
                 dueDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, time.Value.Hour, time.Value.Minute, time.Value.Second);
+                taskType = TaskType.Event;
             }
 
             if (!full)
@@ -123,7 +129,8 @@ namespace Imagine.Controllers
                         User = context.Users.First(x => x.Id == userId),
                         Modified = DateTime.Now,
                         DueDate = dueDate,
-                        Duration = duration.HasValue ? duration.Value : 0
+                        Duration = duration.HasValue ? duration.Value : 0,
+                        TaskType = TaskType.Pending
                     });
                 context.SaveChanges();
             }
@@ -142,6 +149,7 @@ namespace Imagine.Controllers
                 Id = new Guid(id),
                 Name = name,
                 User = context.Users.First(x => x.Id == userId),
+                TaskType = TaskType.OnTheGo
             };
 
             context.Tasks.Add(entity);
@@ -169,7 +177,8 @@ namespace Imagine.Controllers
                 Frequency = frequency,
                 Period = (Period)Enum.Parse(typeof(Period), period),
                 DueDate = date,
-                Duration = duration != null ? duration.Value : 0
+                Duration = duration != null ? duration.Value : 0,
+                TaskType = TaskType.Recurring
             };
             context.Tasks.Add(entity);
             context.SaveChanges();

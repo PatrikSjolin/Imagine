@@ -226,6 +226,10 @@
     <Compile Include="Migrations\201512071410007_AddingDuration.Designer.cs">
       <DependentUpon>201512071410007_AddingDuration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201512211110562_AddingTaskType.cs" />
+    <Compile Include="Migrations\201512211110562_AddingTaskType.Designer.cs">
+      <DependentUpon>201512211110562_AddingTaskType.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -343,6 +347,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201512071410007_AddingDuration.resx">
       <DependentUpon>201512071410007_AddingDuration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512211110562_AddingTaskType.resx">
+      <DependentUpon>201512211110562_AddingTaskType.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

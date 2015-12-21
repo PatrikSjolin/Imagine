@@ -64,7 +64,7 @@ app.controller('taskController', function ($scope, $http, $window, $uibModal) {
     $scope.AddOnTheGo = function () {
         var taskId = GenerateGuid();
 
-        var task = { Id: taskId, Name: $scope.TaskName, Type: "Pending" }
+        var task = { Id: taskId, Name: $scope.TaskName, Type: "OnTheGo" }
         $scope.Tasks.push(task);
 
         $scope.Generating = true;

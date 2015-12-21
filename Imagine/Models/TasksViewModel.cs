@@ -7,7 +7,8 @@ namespace Imagine.Models
     {
         Pending,
         Recurring,
-        Event
+        Event,
+        OnTheGo
     }
 
     public class TaskViewModel
@@ -16,6 +17,7 @@ namespace Imagine.Models
         public string Name { get; set; }
         public string Type { get; set; }
         public int Hours { get; set; }
+        public bool Scheduled { get; set; }
     }
     public class TasksViewModel
     {

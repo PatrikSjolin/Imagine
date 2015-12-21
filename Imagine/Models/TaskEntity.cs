@@ -23,5 +23,6 @@ namespace Imagine.Models
         public DateTime? Completed { get; set; }
         public Period? Period { get; set; }
         public int? Frequency { get; set; }
+        public TaskType TaskType { get; set; }
     }
 }
