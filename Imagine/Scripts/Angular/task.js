@@ -96,10 +96,15 @@ app.controller('taskController', function ($scope, $http, $window, $uibModal) {
         $scope.TimeBased = true;
     }
 
+    $scope.CompleteTask = function (task) {
+        $http.post("Home/CompleteTask", { id: task.Id });
+        task.TaskStatus = !task.TaskStatus;
+        task.Locked = task.TaskStatus;
+    }
+
     $scope.Lock = function (task) {
-        $http.post("Home/Lock", { id: task.Id });
-        var inputField = $window.document.getElementById("taskInputField");
-        inputField.focus();
+        $http.post("Home/LockTask", { id: task.Id });
+        task.Locked = !task.Locked;
     }
 
     $scope.RemoveTask = function (taskId, index) {
@@ -139,13 +144,6 @@ app.controller('taskController', function ($scope, $http, $window, $uibModal) {
                 }
             }
         });
-    }
-
-    $scope.CompleteTask = function (task) {
-        $http.post("Home/CompleteTask", { id: task.Id });
-        task.TaskStatus = 1;
-        var inputField = $window.document.getElementById("taskInputField");
-        inputField.focus();
     }
 
     function S4() {

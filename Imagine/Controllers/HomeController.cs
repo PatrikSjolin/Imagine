@@ -83,7 +83,8 @@ namespace Imagine.Controllers
                             Id = schedule.Id,
                             Name = schedule.Task.Name,
                             Hours = schedule.Task.Duration,
-                            TaskStatus = schedule.TaskStatus
+                            TaskStatus = schedule.TaskStatus,
+                            Locked = schedule.Locked
                         });
                     }
                 }
@@ -220,14 +221,16 @@ namespace Imagine.Controllers
             }
             string userId = User.Identity.GetUserId();
 
-            context.ScheduledTasks.RemoveRange(context.ScheduledTasks);
+            context.ScheduledTasks.RemoveRange(context.ScheduledTasks.Where(x => !x.Locked));
             context.SaveChanges();
+
+            var lockedTasks = context.ScheduledTasks.Include("Task").Where(x => x.Locked).ToList();
 
             List<TaskEntity> userTasks = context.Tasks.Where(x => x.User.Id == userId).ToList();
 
-            List<TaskEntity> tasksWithDueDates = userTasks.Where(x => x.DueDate.HasValue && !x.Period.HasValue).ToList();
+            List<TaskEntity> tasksWithDueDates = userTasks.Where(x => x.DueDate.HasValue && !x.Period.HasValue && !lockedTasks.Any(y => y.Task.Id == x.Id)).ToList();
             List<TaskEntity> recurringTasks = userTasks.Where(x => x.Period.HasValue).ToList();
-            List<TaskEntity> pendingTasks = userTasks.Where(x => !x.Frequency.HasValue && !x.Period.HasValue && !x.DueDate.HasValue).ToList();
+            List<TaskEntity> pendingTasks = userTasks.Where(x => !x.Frequency.HasValue && !x.Period.HasValue && !x.DueDate.HasValue && !lockedTasks.Any(y => y.Task.Id == x.Id)).ToList();
 
             foreach (var taskWithDueDate in tasksWithDueDates)
             {
@@ -351,14 +354,27 @@ namespace Imagine.Controllers
         public ActionResult CompleteTask(string id)
         {
             var task = context.ScheduledTasks.First(x => x.Id == new Guid(id));
-            task.TaskStatus = TaskStatus.Completed;
+            if(task.TaskStatus == TaskStatus.Completed)
+            {
+                task.TaskStatus = TaskStatus.NotCompleted;
+                task.Locked = false;
+            }
+            else
+            {
+                task.TaskStatus = TaskStatus.Completed;
+                task.Locked = true;
+            }
+            
             context.SaveChanges();
             return Json(new { Code = 200 });
         }
 
         [HttpPost]
-        public ActionResult Lock(string id)
+        public ActionResult LockTask(string id)
         {
+            var task = context.ScheduledTasks.First(x => x.Id == new Guid(id));
+            task.Locked = !task.Locked;
+            context.SaveChanges();
             return Json(new { Code = 200 });
         }
     }

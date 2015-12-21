@@ -14,5 +14,6 @@ namespace Imagine.Models
         public DateTime Date { get; set; }
         public double Hours { get; set; }
         public TaskStatus TaskStatus { get; set; }
+        public bool Locked { get; set; }
     }
 }

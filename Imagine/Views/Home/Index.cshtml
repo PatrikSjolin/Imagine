@@ -64,8 +64,8 @@
                     </div>
                     <div ng-hide="TimeBased || !ShowRecurring">
                         <label>
-                            Frequency
-                            <input type="text" placeholder="Frequency" ng-model="Frequency" />
+                            Occurrences
+                            <input type="text" placeholder="Occurrences" ng-model="Frequency" />
                         </label>
                     </div>
                     <div ng-show="ShowRecurring">
@@ -143,8 +143,9 @@
                                     </td>
                                     <td align="right">
                                         <input type="button" ng-click="CompleteTask(scheduledTask)" ng-hide="scheduledTask.TaskStatus" value="Complete" class="btn btn-xs btn-success" />
-                                        <p ng-show="scheduledTask.TaskStatus">Completed!</p>
-                                        @*<input type="button" ng-click="Lock(scheduledTask)" value="Lock" class="btn btn-xs btn-default" />*@
+                                        <input type="button" ng-click="CompleteTask(scheduledTask)" ng-show="scheduledTask.TaskStatus" value="UnComplete" class="btn btn-xs btn-success" />
+                                        <input type="button" ng-click="Lock(scheduledTask)" ng-show="scheduledTask.Locked && !scheduledTask.TaskStatus" value="Unlock" class="btn btn-xs btn-default" />
+                                        <input type="button" ng-click="Lock(scheduledTask)" ng-hide="scheduledTask.Locked" value="Lock" class="btn btn-xs btn-default" />
                                     </td>
                                 </tr>
                             </table>
