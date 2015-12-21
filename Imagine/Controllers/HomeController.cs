@@ -9,21 +9,33 @@ namespace Imagine.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly ApplicationDbContext context;
+        private readonly string userId;
+        private readonly Random random;
+
+        public HomeController() : base()
+        {
+            context = new ApplicationDbContext();
+            
+            int seed = (int)DateTime.Now.Ticks & 0x0000FFFF;
+            random = new Random(seed);
+        }
+
         public ActionResult Index()
         {
-            ApplicationDbContext context = new ApplicationDbContext();
+            string userId = User.Identity.GetUserId();
             TasksViewModel vm = new TasksViewModel();
 
             vm.Tasks = new List<TaskViewModel>();
-            string userId = User.Identity.GetUserId();
+
             foreach (var task in context.Tasks.Where(x => x.User.Id == userId).OrderBy(x => x.Created))
             {
                 TaskType type = TaskType.Pending;
-                if(task.Period != null)
+                if (task.Period != null)
                 {
                     type = TaskType.Recurring;
                 }
-                else if(task.DueDate != null)
+                else if (task.DueDate != null)
                 {
                     type = TaskType.Event;
                 }
@@ -36,7 +48,7 @@ namespace Imagine.Controllers
                 });
             }
             List<ScheduledTask> scheduled = context.ScheduledTasks.Include("Task").Where(x => x.Task.User.Id == userId).ToList();
-            
+
             vm.ScheduledTasks = GetScheduledTasks(scheduled);
 
             return View(vm);
@@ -77,18 +89,17 @@ namespace Imagine.Controllers
 
             return model;
         }
+
         [HttpPost]
         public ActionResult Add(string id, string name, DateTime? date, DateTime? time, int? duration)
         {
-            ApplicationDbContext context = new ApplicationDbContext();
-
             string userId = User.Identity.GetUserId();
 
             bool full = context.Tasks.Count(x => x.User.Id == userId) > 20;
 
             DateTime? dueDate = null;
 
-            if(date.HasValue && time.HasValue)
+            if (date.HasValue && time.HasValue)
             {
                 dueDate = new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, time.Value.Hour, time.Value.Minute, time.Value.Second);
             }
@@ -96,7 +107,7 @@ namespace Imagine.Controllers
             {
                 dueDate = new DateTime(date.Value.Year, date.Value.Month, date.Value.Day);
             }
-            else if(time.HasValue)
+            else if (time.HasValue)
             {
                 dueDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, time.Value.Hour, time.Value.Minute, time.Value.Second);
             }
@@ -121,9 +132,32 @@ namespace Imagine.Controllers
         }
 
         [HttpPost]
+        public ActionResult AddOnTheGo(string id, string name)
+        {
+            string userId = User.Identity.GetUserId();
+
+            TaskEntity entity = new TaskEntity
+            {
+                Created = DateTime.Now,
+                Id = new Guid(id),
+                Name = name,
+                User = context.Users.First(x => x.Id == userId),
+            };
+
+            context.Tasks.Add(entity);
+            context.SaveChanges();
+
+            SchedulePending(new List<TaskEntity> { entity }, new TimeSpan(3, 0, 0, 0), DateTime.Today);
+            context.SaveChanges();
+
+            List<ScheduledTask> scheduled = context.ScheduledTasks.Include("Task").Where(x => x.Task.User.Id == userId).ToList();
+            var scheduledTasks = GetScheduledTasks(scheduled);
+            return Json(new { Code = 200, Data = scheduledTasks });
+        }
+
+        [HttpPost]
         public ActionResult AddRecurringTask(string id, string name, string period, int? frequency, DateTime? date, int? duration)
         {
-            ApplicationDbContext context = new ApplicationDbContext();
             string userId = User.Identity.GetUserId();
 
             TaskEntity entity = new TaskEntity
@@ -146,8 +180,7 @@ namespace Imagine.Controllers
         [HttpPost]
         public ActionResult Edit(string id, string name, string duration)
         {
-            ApplicationDbContext context = new ApplicationDbContext();
-            var task = context.Tasks.First(x => x.Id == new Guid(id));
+            TaskEntity task = context.Tasks.First(x => x.Id == new Guid(id));
             task.Name = name;
             task.Duration = int.Parse(duration);
             context.SaveChanges();
@@ -158,7 +191,6 @@ namespace Imagine.Controllers
         [HttpPost]
         public ActionResult Remove(string id)
         {
-            ApplicationDbContext context = new ApplicationDbContext();
             context.Tasks.Remove(context.Tasks.First(x => x.Id == new Guid(id)));
             context.ScheduledTasks.RemoveRange(context.ScheduledTasks.Where(x => x.Task.Id == new Guid(id)));
             context.SaveChanges();
@@ -169,16 +201,16 @@ namespace Imagine.Controllers
         [HttpPost]
         public ActionResult AddSchedule(DateTime? from, DateTime? to)
         {
-            if(from == null)
+            if (from == null)
             {
                 from = DateTime.Today;
             }
-            if(to == null)
+            if (to == null)
             {
                 to = from.Value.AddDays(14);
             }
-            ApplicationDbContext context = new ApplicationDbContext();
             string userId = User.Identity.GetUserId();
+
             context.ScheduledTasks.RemoveRange(context.ScheduledTasks);
             context.SaveChanges();
 
@@ -198,17 +230,16 @@ namespace Imagine.Controllers
                     Task = taskWithDueDate
                 });
             }
-            int seed = (int)DateTime.Now.Ticks & 0x0000FFFF;
-            Random rand = new Random(seed);
+
             TimeSpan period = to.Value.Subtract(from.Value);
 
             foreach (var recurring in recurringTasks)
             {
-                if(recurring.Period == Period.WorkDay)
+                if (recurring.Period == Period.WorkDay)
                 {
-                    for(int i = 0; i < period.Days; i++)
+                    for (int i = 0; i < period.Days; i++)
                     {
-                        if(from.Value.AddDays(i).DayOfWeek != DayOfWeek.Saturday && from.Value.AddDays(i).DayOfWeek != DayOfWeek.Sunday)
+                        if (from.Value.AddDays(i).DayOfWeek != DayOfWeek.Saturday && from.Value.AddDays(i).DayOfWeek != DayOfWeek.Sunday)
                         {
                             context.ScheduledTasks.Add(new ScheduledTask
                             {
@@ -239,24 +270,24 @@ namespace Imagine.Controllers
                 double daysBetweenActivities = days / frequency;
 
                 DateTime startDate = from.Value;
-                if(recurring.DueDate.HasValue)
+                if (recurring.DueDate.HasValue)
                 {
                     startDate = recurring.DueDate.Value;
                 }
                 else
                 {
-                    startDate = startDate.AddDays(rand.Next((int)daysBetweenActivities));
+                    startDate = startDate.AddDays(random.Next((int)daysBetweenActivities));
                 }
                 for (int i = 0; i * daysBetweenActivities < period.Days; i++)
                 {
                     DateTime newTime;
-                    if(recurring.DueDate.HasValue)
+                    if (recurring.DueDate.HasValue)
                     {
-                        if(days == 30)
+                        if (days == 30)
                         {
                             newTime = startDate.AddMonths(i);
                         }
-                        else if(days == 7)
+                        else if (days == 7)
                         {
                             newTime = startDate.AddDays(i * 7);
                         }
@@ -264,7 +295,7 @@ namespace Imagine.Controllers
                         {
                             newTime = startDate.AddDays(i);
                         }
-                        if(newTime < DateTime.Now)
+                        if (newTime < DateTime.Now)
                         {
                             continue;
                         }
@@ -283,23 +314,28 @@ namespace Imagine.Controllers
                 }
             }
 
+            SchedulePending(pendingTasks, period, from.Value);
 
-            foreach(var pendingTask in pendingTasks)
-            {
-                context.ScheduledTasks.Add(new ScheduledTask
-                {
-                    Date = from.Value.Add(new TimeSpan(rand.Next(period.Days), rand.Next(period.Hours), rand.Next(period.Minutes), 0)),
-                    Hours = pendingTask.Duration,
-                    Id = Guid.NewGuid(),
-                    Task = pendingTask
-                });
-            }
             context.SaveChanges();
 
             List<ScheduledTask> scheduled = context.ScheduledTasks.Include("Task").Where(x => x.Task.User.Id == userId).ToList();
             var scheduledTasks = GetScheduledTasks(scheduled);
 
             return Json(new { Code = 200, Data = scheduledTasks });
+        }
+
+        private void SchedulePending(List<TaskEntity> pendingTasks, TimeSpan period, DateTime from)
+        {
+            foreach (TaskEntity pendingTask in pendingTasks)
+            {
+                context.ScheduledTasks.Add(new ScheduledTask
+                {
+                    Date = from.Add(new TimeSpan(random.Next(period.Days), random.Next(period.Hours), random.Next(period.Minutes), 0)),
+                    Hours = pendingTask.Duration,
+                    Id = Guid.NewGuid(),
+                    Task = pendingTask
+                });
+            }
         }
 
         [HttpPost]

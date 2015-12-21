@@ -62,6 +62,14 @@ app.controller('taskController', function ($scope, $http, $window, $uibModal) {
     }
 
     $scope.AddOnTheGo = function () {
+        var taskId = GenerateGuid();
+
+        var task = { Id: taskId, Name: $scope.TaskName, Type: "Pending" }
+        $scope.Tasks.push(task);
+
+        $scope.Generating = true;
+        $http.post("Home/AddOnTheGo", { id: taskId, name: $scope.TaskName }).success(AddScheduledOnTheGo);
+        Clear();
         var inputField = $window.document.getElementById("taskInputField");
         inputField.focus();
     }
@@ -83,8 +91,6 @@ app.controller('taskController', function ($scope, $http, $window, $uibModal) {
         $scope.Period = "";
         $scope.Frequency = "";
         $scope.Duration = "";
-        $scope.Date = "";
-        $scope.Time = "";
         $scope.ShowAdvanced = false;
         $scope.ShowRecurring = false;
         $scope.TimeBased = true;
@@ -106,7 +112,7 @@ app.controller('taskController', function ($scope, $http, $window, $uibModal) {
 
     $scope.GenerateSchedule = function () {
         $scope.Generating = true;
-        $http.post("Home/AddSchedule", { from: $scope.From, to: $scope.To }).success(SuccessReload);
+        $http.post("Home/AddSchedule", { from: $scope.From, to: $scope.To }).success(AddScheduledTasks);
 
         var inputField = $window.document.getElementById("taskInputField");
         inputField.focus();
@@ -148,7 +154,7 @@ app.controller('taskController', function ($scope, $http, $window, $uibModal) {
         return (S4() + S4() + "-" + S4() + "-4" + S4().substr(0, 3) + "-" + S4() + "-" + S4() + S4() + S4()).toLowerCase();
     }
 
-    function SuccessReload(data) {
+    function AddScheduledTasks(data) {
         $scope.ScheduledTasks = data.Data;
         for (var i = 0; i < $scope.ScheduledTasks.length; i++) {
             var date = $scope.ScheduledTasks[i].Date;
@@ -156,6 +162,15 @@ app.controller('taskController', function ($scope, $http, $window, $uibModal) {
         }
         $scope.Generating = false;
     };
+
+    function AddScheduledOnTheGo(data) {
+        $scope.ScheduledTasks = data.Data;
+        for (var i = 0; i < $scope.ScheduledTasks.length; i++) {
+            var date = $scope.ScheduledTasks[i].Date;
+            $scope.ScheduledTasks[i].Date = new Date(parseInt(date.replace('/Date(', '')));
+        }
+        $scope.Generating = false;
+    }
 });
 
 angular.module('taskApp').controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, $http, items) {
