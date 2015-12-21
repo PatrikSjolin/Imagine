@@ -27,7 +27,6 @@ namespace Imagine.Controllers
 
             vm.Tasks = new List<TaskViewModel>();
 
-
             List<ScheduledTask> scheduled = context.ScheduledTasks.Include("Task").Where(x => x.Task.User.Id == userId).ToList();
 
             vm.ScheduledTasks = GetScheduledTasks(scheduled);
@@ -84,6 +83,7 @@ namespace Imagine.Controllers
                             Id = schedule.Id,
                             Name = schedule.Task.Name,
                             Hours = schedule.Task.Duration,
+                            TaskStatus = schedule.TaskStatus
                         });
                     }
                 }
@@ -130,7 +130,7 @@ namespace Imagine.Controllers
                         Modified = DateTime.Now,
                         DueDate = dueDate,
                         Duration = duration.HasValue ? duration.Value : 0,
-                        TaskType = TaskType.Pending
+                        TaskType = taskType
                     });
                 context.SaveChanges();
             }
@@ -345,6 +345,15 @@ namespace Imagine.Controllers
                     Task = pendingTask
                 });
             }
+        }
+
+        [HttpPost]
+        public ActionResult CompleteTask(string id)
+        {
+            var task = context.ScheduledTasks.First(x => x.Id == new Guid(id));
+            task.TaskStatus = TaskStatus.Completed;
+            context.SaveChanges();
+            return Json(new { Code = 200 });
         }
 
         [HttpPost]

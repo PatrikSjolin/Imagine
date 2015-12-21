@@ -142,6 +142,8 @@ app.controller('taskController', function ($scope, $http, $window, $uibModal) {
     }
 
     $scope.CompleteTask = function (task) {
+        $http.post("Home/CompleteTask", { id: task.Id });
+        task.TaskStatus = 1;
         var inputField = $window.document.getElementById("taskInputField");
         inputField.focus();
     }

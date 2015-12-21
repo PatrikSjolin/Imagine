@@ -18,7 +18,9 @@ namespace Imagine.Models
         public string Type { get; set; }
         public int Hours { get; set; }
         public bool Scheduled { get; set; }
+        public TaskStatus TaskStatus { get; set; }
     }
+
     public class TasksViewModel
     {
         public List<TaskViewModel> Tasks { get; set; }

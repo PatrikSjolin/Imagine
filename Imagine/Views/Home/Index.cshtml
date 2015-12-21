@@ -55,7 +55,7 @@
                     <div ng-show="TimeBased || !ShowRecurring">
                         <label>
                             Date
-                            <input type="date" ng-model="Date" />
+                            <input type="date" min="@DateTime.Today.ToShortDateString()" ng-model="Date" />
                         </label>
                         <label>
                             Time
@@ -86,6 +86,7 @@
                     </div>
                 </div>
             </div>
+
             @*Schedule*@
             <div class="col-md-4">
                 <h1>Schedule</h1><br />
@@ -121,7 +122,6 @@
                             {{task.Type}}
                         </td>
                         <td align="right" valign="middle">
-                            @*<input type="submit" class="btn btn-xs btn-success" value="Scheduled" ng-show="{{task.Scheduled}}" />*@
                             <input type="submit" ng-click="EditTask(task, $index)" class="btn btn-xs btn-primary" value="Edit" />
                             <input type="submit" ng-click="RemoveTask(task, $index)" class="btn btn-xs btn-danger" value="Remove" />
                         </td>
@@ -142,8 +142,9 @@
                                         <p>{{scheduledTask.Name}} - {{scheduledTask.Hours}} h</p>
                                     </td>
                                     <td align="right">
-                                        <input type="button" ng-click="CompleteTask(scheduledTask)" value="Complete" class="btn btn-xs btn-success" />
-                                        <input type="button" ng-click="Lock(scheduledTask)" value="Lock" class="btn btn-xs btn-default" />
+                                        <input type="button" ng-click="CompleteTask(scheduledTask)" ng-hide="scheduledTask.TaskStatus" value="Complete" class="btn btn-xs btn-success" />
+                                        <p ng-show="scheduledTask.TaskStatus">Completed!</p>
+                                        @*<input type="button" ng-click="Lock(scheduledTask)" value="Lock" class="btn btn-xs btn-default" />*@
                                     </td>
                                 </tr>
                             </table>

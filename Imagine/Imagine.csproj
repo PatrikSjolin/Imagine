@@ -230,6 +230,10 @@
     <Compile Include="Migrations\201512211110562_AddingTaskType.Designer.cs">
       <DependentUpon>201512211110562_AddingTaskType.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201512211807112_AddingTaskStatus.cs" />
+    <Compile Include="Migrations\201512211807112_AddingTaskStatus.Designer.cs">
+      <DependentUpon>201512211807112_AddingTaskStatus.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -350,6 +354,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201512211110562_AddingTaskType.resx">
       <DependentUpon>201512211110562_AddingTaskType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201512211807112_AddingTaskStatus.resx">
+      <DependentUpon>201512211807112_AddingTaskStatus.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
